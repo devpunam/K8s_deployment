@@ -45,4 +45,5 @@ phases:
 
 artifacts:
   files:
-    - k8s/deployment.yaml
+    - k8s/k8s-aws.yaml
+
