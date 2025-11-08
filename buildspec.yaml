@@ -7,18 +7,30 @@ env:
     CLUSTER_NAME: demo-cluster-1
 
 phases:
+  install:
+    commands:
+      - echo "Installing kubectl..."
+      - curl -o /usr/local/bin/kubectl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+      - chmod +x /usr/local/bin/kubectl
+      - kubectl version --client
+
+      - echo "Installing eksctl..."
+      - curl -sLO "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz"
+      - tar xz -C /usr/local/bin -f eksctl_$(uname -s)_amd64.tar.gz
+      - eksctl version
+
   pre_build:
     commands:
-      - echo Logging in to ECR...
+      - echo "Logging in to Amazon ECR..."
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPO
 
   build:
     commands:
-      - echo Building Docker image..
+      - echo "Building Docker image..."
       - docker build -t webapp .
       - docker tag webapp:latest $ECR_REPO/webapp:latest
       - docker push $ECR_REPO/webapp:latest
-      - echo Image build and push completed
+      - echo "Image build and push completed."
 
   post_build:
     commands:
@@ -29,7 +41,7 @@ phases:
       - kubectl apply -f k8s-aws.yaml
       - kubectl get pods -n webapp
       - kubectl get svc -n webapp
-      - echo "Deployment to EKS completed"
+      - echo "Deployment to EKS completed."
 
 artifacts:
   files:
