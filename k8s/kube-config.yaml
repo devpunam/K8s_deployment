@@ -19,3 +19,26 @@ data:
       username: punam
       groups:
         - system:masters
+
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aws-auth
+  namespace: kube-system
+data:
+  mapRoles: |
+    - rolearn: arn:aws:iam::067050919328:role/eksctl-demo-cluster-1-cluster-ServiceRole-LCxi7k8FoL3s
+      username: system:node:{{EC2PrivateDNSName}}
+      groups:
+        - system:bootstrappers
+        - system:nodes
+    - rolearn: arn:aws:iam::067050919328:role/codebuild-web2app-service-role
+      username: build
+      groups:
+        - system:masters
+  mapUsers: |
+    - userarn: arn:aws:iam::067050919328:user/punam
+      username: punam
+      groups:
+        - system:masters
