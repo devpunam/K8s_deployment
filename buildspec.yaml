@@ -37,7 +37,7 @@ phases:
       - echo "Updating Kubernetes deployment..."
       - cd ./k8s
       - aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
-      - kubectl get ns webapp || kubectl create namespace webapp
+      - kubectl get namespace webapp || kubectl create namespace webapp
       - kubectl apply -f k8s-aws.yaml
       - kubectl get pods -n webapp
       - kubectl get svc -n webapp
